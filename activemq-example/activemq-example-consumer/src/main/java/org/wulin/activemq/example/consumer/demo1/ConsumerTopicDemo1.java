@@ -23,6 +23,10 @@ public class ConsumerTopicDemo1 {
 	
 	
 	 public void TestTopicConsumer() throws Exception{
+		 	//failover:(tcp://192.168.0.49:61616) //当网络出现断网时,过段时间有好了,能自动重连
+//		    ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("failover:("+value+")");
+//		    factory.setTrustAllPackages(true); // 信任所有的包
+		 
 	        //1、创建工厂连接对象，需要制定ip和端口号
 	        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://wulinThinkPad:61616");
 	        //2、使用连接工厂创建一个连接对象
