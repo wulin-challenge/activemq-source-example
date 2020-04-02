@@ -1,4 +1,4 @@
-package org.wulin.activemq.example.consumer.demo1;
+package org.wulin.activemq.example.consumer2.demo1;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -13,11 +13,11 @@ import javax.jms.TopicSubscriber;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-public class ConsumerTopicDemo1 {
+public class Consumer2TopicDemo1 {
 	
 	public static void main(String[] args) throws Exception {
 		
-		ConsumerTopicDemo1 consumer = new ConsumerTopicDemo1();
+		Consumer2TopicDemo1 consumer = new Consumer2TopicDemo1();
 		consumer.TestTopicConsumer();
 	}
 	
@@ -31,8 +31,7 @@ public class ConsumerTopicDemo1 {
 	        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://wulinThinkPad:61616");
 	        //2、使用连接工厂创建一个连接对象
 	        Connection connection = connectionFactory.createConnection();
-	        //
-	        connection.setClientID("test-topic1");
+	        connection.setClientID("test-topic2");
 	        //3、开启连接
 	        connection.start();
 	        //4、使用连接对象创建会话（session）对象
