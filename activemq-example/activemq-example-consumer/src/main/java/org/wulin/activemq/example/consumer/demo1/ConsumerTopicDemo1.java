@@ -1,6 +1,5 @@
 package org.wulin.activemq.example.consumer.demo1;
 
-import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -9,9 +8,12 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
-import javax.jms.TopicSubscriber;
 
+import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.RedeliveryPolicy;
+import org.apache.activemq.broker.region.policy.RedeliveryPolicyMap;
+import org.apache.activemq.command.ActiveMQDestination;
 
 public class ConsumerTopicDemo1 {
 	
@@ -30,7 +32,8 @@ public class ConsumerTopicDemo1 {
 	        //1、创建工厂连接对象，需要制定ip和端口号
 	        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://wulinThinkPad:61616");
 	        //2、使用连接工厂创建一个连接对象
-	        Connection connection = connectionFactory.createConnection();
+//	        Connection connection = connectionFactory.createConnection();
+	        ActiveMQConnection connection = (ActiveMQConnection) connectionFactory.createConnection();
 	        //
 	        connection.setClientID("test-topic1");
 	        //3、开启连接
@@ -39,6 +42,17 @@ public class ConsumerTopicDemo1 {
 	        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 	        //5、使用会话对象创建目标对象，包含queue和topic（一对一和一对多）
 	        Topic topic = session.createTopic("test-topic");
+	        
+	        //重发策略,broker若重启,重试将失效
+	        RedeliveryPolicy queuePolicy = new RedeliveryPolicy();
+	        queuePolicy.setInitialRedeliveryDelay(5000); //第一次重试 延迟 5s
+	        queuePolicy.setRedeliveryDelay(5000); // 之后的重试 每隔 5s重试一次
+	        queuePolicy.setUseExponentialBackOff(false);
+	        queuePolicy.setMaximumRedeliveries(5); //重试次数5次
+	        
+	        RedeliveryPolicyMap map = connection.getRedeliveryPolicyMap();
+	        map.put((ActiveMQDestination) topic, queuePolicy);
+	        
 	        
 	        //6、使用会话对象创建生产者对象
 	        MessageConsumer consumer = session.createConsumer(topic);
@@ -53,9 +67,12 @@ public class ConsumerTopicDemo1 {
 	                    TextMessage textMessage = (TextMessage)message;
 	                    try {
 	                        System.out.println(textMessage.getText());
+	                        
+	                        // 当处理过程中失败了,将会执行重试
+//	                        int i = 1/0;
 	                    } catch (JMSException e) {
-	                        // TODO Auto-generated catch block
-	                        e.printStackTrace();
+	                    	System.out.println("消费失败! 重试中...");
+	                        throw new RuntimeException("消费失败! 重试中...");
 	                    }
 	                }
 	            }
