@@ -10,7 +10,7 @@
     <properties>
         <org.springframework.version>4.3.7.RELEASE</org.springframework.version>
         <springjunit.version>4.12</springjunit.version>
-        <junit.version>4.9</junit.version>
+        <junit.version>4.13.1</junit.version>
         <activemq.version>5.14.4</activemq.version>
     </properties>
 
